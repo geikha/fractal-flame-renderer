@@ -1,9 +1,11 @@
 /**
  * Read: https://flam3.com/flame_draves.pdf for more info
  * From mega & ritchse
+ *
+ * Colormaps from: https://github.com/tritoke/libcmap/tree/master/colourmaps
  */
 
-const { vec2, mat2d } = glMatrix
+const { vec2, vec3, mat2d } = glMatrix
 
 const variations = {
     linear(out, p) {
@@ -14,116 +16,137 @@ const variations = {
         return vec2.set(out, Math.sin(x), Math.sin(y))
     },
     spherical(out, p) {
-        return vec2.scale(out, p, 1/vec2.squaredLength(p))
+        return vec2.scale(out, p, 1 / vec2.squaredLength(p))
     },
-    swirl(out,p){
+    swirl(out, p) {
         const x = p[0], y = p[1]
         const r2 = vec2.squaredLength(p)
         const sinr2 = Math.sin(r2)
         const cosr2 = Math.sin(r2)
-        return vec2.set(out, (x*sinr2)-(y*cosr2), (x*cosr2)+(y*sinr2))
+        return vec2.set(out, (x * sinr2) - (y * cosr2), (x * cosr2) + (y * sinr2))
     },
-    horseshoe(out,p){
+    horseshoe(out, p) {
         const x = p[0], y = p[1]
         const r = vec2.length(p)
-        const innerP = vec2.create()
-        vec2.set(innerP, (x-y)*(x+y),2*x*y)
-        return vec2.scale(out,innerP,1/r)
+        vec2.set(out, (x - y) * (x + y), 2 * x * y)
+        return vec2.scale(out, out, 1 / r)
     },
-    polar(out,p){
-        const origin = vec2.create()
-        vec2.set(origin,0,0)
-        const theta = vec2.angle(origin,p)
+    polar(out, p) {
+        const x = p[0], y = p[1]
+        const theta = Math.atan2(y, x)
         const r = vec2.length(p)
-        return vec2.set(out, theta/Math.PI, r-1)
+        return vec2.set(out, theta / Math.PI, r - 1)
     },
-    handkerchief(out,p){
-        const origin = vec2.create()
-        vec2.set(origin,0,0)
-        const theta = vec2.angle(origin,p)
+    handkerchief(out, p) {
+        const x = p[0], y = p[1]
+        const theta = Math.atan2(y, x)
         const r = vec2.length(p)
-        return vec2.set(out, Math.sin(theta+r), Math.cos(theta-r))
+        return vec2.set(out, Math.sin(theta + r), Math.cos(theta - r))
     },
-    heart(out,p){
-        const origin = vec2.create()
-        vec2.set(origin,0,0)
-        const theta = vec2.angle(origin,p)
+    heart(out, p) {
+        const x = p[0], y = p[1]
+        const theta = Math.atan2(y, x)
         const r = vec2.length(p)
-        const innerP = vec2.create()
-        vec2.set(innerP, Math.sin(theta*r), 0-Math.cos(theta*r))
-        return vec2.scale(out,innerP,r)
+        vec2.set(out, Math.sin(theta * r), -Math.cos(theta * r))
+        return vec2.scale(out, out, r)
     },
-    disc(out,p){
-        const origin = vec2.create()
-        vec2.set(origin,0,0)
-        const theta = vec2.angle(origin,p)
+    disc(out, p) {
+        const x = p[0], y = p[1]
+        const theta = Math.atan2(y, x)
         const r = vec2.length(p)
-        const innerP = vec2.create()
-        vec2.set(innerP, Math.sin(Math.PI*r), Math.cos(Math.PI*r))
-        return vec2.scale(out,innerP,theta/r)
+        vec2.set(out, Math.sin(Math.PI * r), Math.cos(Math.PI * r))
+        return vec2.scale(out, out, theta / r)
     },
-    spiral(out,p){
-        const origin = vec2.create()
-        vec2.set(origin,0,0)
-        const theta = vec2.angle(origin,p)
+    spiral(out, p) {
+        const x = p[0], y = p[1]
+        const theta = Math.atan2(y, x)
         const r = vec2.length(p)
-        const innerP = vec2.create()
-        vec2.set(innerP, Math.cos(theta)+Math.sin(r), Math.sin(theta)-Math.cos(r))
-        return vec2.scale(out,innerP,1/r)
+        vec2.set(out, Math.cos(theta) + Math.sin(r), Math.sin(theta) - Math.cos(r))
+        return vec2.scale(out, out, 1 / r)
     },
-    hyperbolic(out,p){
-        const origin = vec2.create()
-        vec2.set(origin,0,0)
-        const theta = vec2.angle(origin,p)
+    hyperbolic(out, p) {
+        const x = p[0], y = p[1]
+        const theta = Math.atan2(y, x)
         const r = vec2.length(p)
-        return vec2.set(out,Math.sin(theta)/r,r*Math.cos(theta))
+        return vec2.set(out, Math.sin(theta) / r, r * Math.cos(theta))
     },
-    diamond(out,p){
-        const origin = vec2.create()
-        vec2.set(origin,0,0)
-        const theta = vec2.angle(origin,p)
+    diamond(out, p) {
+        const x = p[0], y = p[1]
+        const theta = Math.atan2(y, x)
         const r = vec2.length(p)
-        return vec2.set(out,Math.sin(theta)*Math.cos(r),Math.cos(theta)*Math.sin(r))
+        return vec2.set(out, Math.sin(theta) * Math.cos(r), Math.cos(theta) * Math.sin(r))
     },
-    fisheye(out,p){
+    fisheye(out, p) {
         const r = vec2.length(p)
-        return vec2.scale(out,p,2/(r+1))
+        return vec2.scale(out, p, 2 / (r + 1))
     }
 }
 const variationTypes = Object.keys(variations)
 
+function randomVariation(){
+  const keys = Object.keys(variations);
+  return variations[keys[ keys.length * Math.random() << 0]];  //it just... works
+}
+
+function randomMat2d(){
+  const rand = ()=> (Math.random()*4)-2
+  return mat2d.fromValues(rand(), rand(), rand(), rand(), rand(), rand()) 
+}
+
+function randomColormapName() {
+    return colormaps[Math.floor(Math.random() * colormaps.length)]
+}
+
 const fractal = {
     variations: [
-        { fn: variations.sinusoidal, mat: mat2d.fromValues(0.66, 0, 0, 0.66, -0.5, -0.5), c: 0 },
-        { fn: variations.sinusoidal, mat: mat2d.fromValues(0.66, 0, 0, 0.66, -0.5,  0.5), c: 0.5},
-        { fn: variations.sinusoidal, mat: mat2d.fromValues(0.66, 0, 0, 0.66,  0.5, -0.5), c: 1},
+        { fn: randomVariation(), mat: randomMat2d(), c: 0 },
+        { fn: randomVariation(), mat: randomMat2d(), c: 0.5 },
+        { fn: randomVariation(), mat: randomMat2d(), c: 1 },
     ],
-    final :
-        { fn: variations.linear, mat: mat2d.fromValues(1, 0, 0, 1, 0, 0), c: 1 },
-    gradient :
-        [[50,200,20],[0,0,255]]
+    /* NOTE: Currently final transform color is not used */
+    final: { fn: variations.linear, mat: mat2d.fromValues(1, 0, 0, 1, 0, 0), c: 1 },
+    //colormap: [vec3.fromValues(0.1, 1, 1), vec3.fromValues(1, 0, 0), vec3.fromValues(0.1, 0.4, 1)]
+    colormap: [vec3.fromValues(1, 1, 1), vec3.fromValues(1, 1, 1)],
+    colormapName: 'White'
+}
+
+function getColorAt(out, cindex, colormap) {
+    const idx = cindex * (colormap.length - 1)
+    const idx_left = Math.floor(idx)
+    const color_left = colormap[idx_left]
+
+    if (idx === idx_left) {
+        return color_left
+    }
+
+    const idx_right = Math.ceil(idx)
+    const color_right = colormap[idx_right]
+
+    const bias = (idx - idx_left) / (idx_right - idx_left)
+
+    return vec3.lerp(out, color_left, color_right, bias)
 }
 
 const options = {
-    pointsToGenerate : 1000,
-    iterationsToSkip : 20,
-    iterationsToPlot : 150,
-    width : 600,
-    height : 600
+    pointsToGenerate: 1000,
+    iterationsToSkip: 20,
+    iterationsToPlot: 150,
+    width: 1000,
+    height: 1000,
+    interval: 20
 }
 
-function generatePointsFor(fractal, options={}) {
-
+function generatePointsFor(fractal, options = {}) {
     const POINTS = options.pointsToGenerate || 10000
     const SKIPPED_ITERS = options.iterationsToSkip || 20
     const PLOTTED_ITERS = options.iterationsToPlot || 200
     const WIDTH = options.width || 500
     const HEIGHT = options.height || 500
     const pointsArray = options.pointsArray || new Int32Array(WIDTH * HEIGHT)
-    const colorArray = options.colorArray || new Float32Array(WIDTH * HEIGHT)
+    const colorArray = options.colorArray || new Float32Array(WIDTH * HEIGHT * 3)
 
     function getRandomVariation() {
-        return fractal.variations[Math.floor(Math.random()*fractal.variations.length)]
+        return fractal.variations[Math.floor(Math.random() * fractal.variations.length)]
     }
 
     function pointIsInBounds(p) {
@@ -132,18 +155,25 @@ function generatePointsFor(fractal, options={}) {
             && -1 <= y && y <= 1
     }
 
-    function addPointToArray(p,c) {
+    const color = vec3.create()
+    function addPointToArray(p, c) {
         const x = p[0], y = p[1]
         const x_array = Math.floor((x + 1) / 2 * WIDTH)
         const y_array = Math.floor((y + 1) / 2 * HEIGHT)
         pointsArray[y_array * WIDTH + x_array]++
-        colorArray[y_array * WIDTH + x_array] = c
+        getColorAt(color, c, fractal.colormap)
+        const color_array_idx = y_array * WIDTH * 3 + x_array * 3
+        colorArray[color_array_idx + 0] += color[0]
+        colorArray[color_array_idx + 1] += color[1]
+        colorArray[color_array_idx + 2] += color[2]
     }
 
     const p = vec2.create()
+    const plotted_p = vec2.create()
+    let c = Math.random()
 
     for (let i = 0; i < POINTS; i++) {
-        vec2.set(p, Math.random()*2-1, Math.random()*2-1)
+        vec2.set(p, Math.random() * 2 - 1, Math.random() * 2 - 1)
 
         for (let j = 0; j < SKIPPED_ITERS; j++) {
             const variation = getRandomVariation()
@@ -155,19 +185,18 @@ function generatePointsFor(fractal, options={}) {
             const variation = getRandomVariation()
             vec2.transformMat2d(p, p, variation.mat)
             variation.fn(p, p)
+            c = (c + variation.c) / 2
 
-            vec2.transformMat2d(p, p, fractal.final.mat)
-            fractal.final.fn(p, p)
+            vec2.transformMat2d(plotted_p, p, fractal.final.mat)
+            fractal.final.fn(plotted_p, plotted_p)
 
-            if (pointIsInBounds(p)) {
-                var c = Math.random()
-                c = (c+variation.c)/2
-                addPointToArray(p,c)
+            if (pointIsInBounds(plotted_p)) {
+                addPointToArray(plotted_p, c)
             }
         }
     }
 
-    return pointsArray
+    return { pointsArray, colorArray }
 }
 
 function getMaxFreq(pointsArray) {
@@ -181,18 +210,12 @@ function getMaxFreq(pointsArray) {
     return Math.log(maxFreq)
 }
 
-function getColorFromGradient(index){
-    const c = fractal.gradient
-    const r = c[0][0] + index * (c[1][0] - c[0][0])
-    const g = c[0][1] + index * (c[1][1] - c[0][1])
-    const b = c[0][2] + index * (c[1][2] - c[0][2])
-    return [r,g,b]
-}
-
-function render(data, width, height, pointsArray, colorArray) {
+function render(data, options) {
+    const { width, height, pointsArray, colorArray } = options
+    const color = vec3.create()
     const maxFreq = getMaxFreq(pointsArray)
-    
-    function setPixel(x, y, r, g, b, a=255) {
+
+    function setPixel(x, y, r, g, b, a = 255) {
         data[y * width * 4 + x * 4 + 0] = r
         data[y * width * 4 + x * 4 + 1] = g
         data[y * width * 4 + x * 4 + 2] = b
@@ -201,11 +224,14 @@ function render(data, width, height, pointsArray, colorArray) {
 
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
-            const freq = pointsArray[y * width + x]
-            const alpha = Math.log(freq) / maxFreq * 256
-            const cindex = colorArray[y * width + x]
-            const color = getColorFromGradient(cindex)
-            setPixel(x, y, color[0], color[1], color[2], alpha)
+            const pixel_idx = y * width + x
+            const freq = pointsArray[pixel_idx]
+            const color_array_idx = y * width * 3 + x * 3
+            const r = colorArray[color_array_idx + 0] / freq
+            const g = colorArray[color_array_idx + 1] / freq
+            const b = colorArray[color_array_idx + 2] / freq
+            const alpha = Math.log(freq) / maxFreq * 255
+            setPixel(x, y, r * 255, g * 255, b * 255, alpha)
         }
     }
 
@@ -214,101 +240,151 @@ function render(data, width, height, pointsArray, colorArray) {
 function initRendering() {
     const canvas = document.getElementById('output')
     const ctx = canvas.getContext('2d')
-    const CANVAS_WIDTH = canvas.width
-    const CANVAS_HEIGHT = canvas.height
 
-    const pointsArray = new Int32Array(CANVAS_WIDTH * CANVAS_HEIGHT)
-    const colorArray = new Float32Array(CANVAS_WIDTH * CANVAS_HEIGHT)
-    const clear = () => pointsArray.fill(0)
-    const image = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT)
-    options.pointsArray = pointsArray
-    options.colorArray = colorArray
+    function createResources() {
+        const width = canvas.width = options.width
+        const height = canvas.height = options.height
 
-    setInterval(() => {
+        const pointsArray = new Int32Array(width * height)
+        const colorArray = new Float32Array(width * height * 3)
+        const image = ctx.createImageData(width, height)
+
+        return [pointsArray, colorArray, image]
+    }
+
+    function improveRender() {
         generatePointsFor(fractal, options)
-        render(image.data, CANVAS_WIDTH, CANVAS_HEIGHT, options.pointsArray, options.colorArray)
-    }, 20)
+        render(image.data, options)
+    }
 
+    let image
+    [options.pointsArray, options.colorArray, image] = createResources()
+    let intervalID = setInterval(improveRender, options.interval)
+
+    let requestAnimationFrameID
     function drawToScreen() {
         ctx.putImageData(image, 0, 0)
-        requestAnimationFrame(drawToScreen)
+        requestAnimationFrameID = requestAnimationFrame(drawToScreen)
     }
     drawToScreen()
 
-    return clear
-}
-
-function optionsFolder(gui,clear){
-    const folder = gui.addFolder(`options`);
-    folder.add(options,"pointsToGenerate",100,20000,100).name("points amt").onChange(clear)
-    folder.add(options,"iterationsToSkip",0,300,10).name("skipped iterations").onChange(clear)
-    folder.add(options,"iterationsToPlot",50,1000,50).name("iterations").onChange(clear)
-    //folder.add(options,"width",100,3840,10).onChange(clear)
-    //folder.add(options,"height",100,3840,10).onChange(clear)
-}
-
-function variationFolder(gui, variation, i, clear) {
-	const folder = gui.addFolder(`Variation ${i}`);
-
-	folder
-		.add(variation, "fn")
-		.name("Type")
-		.options(variationTypes)
-		.onChange((type) => {
-			variation.fn = variations[type];
-			clear();
-		});
-
-	folder.add(variation.mat, 0, -10, 10, 0.005).name("a").onChange(clear);
-	folder.add(variation.mat, 1, -10, 10, 0.005).name("b").onChange(clear);
-	folder.add(variation.mat, 3, -10, 10, 0.005).name("c").onChange(clear);
-	folder.add(variation.mat, 4, -10, 10, 0.005).name("d").onChange(clear);
-	folder.add(variation.mat, 4, -2, 2, 0.005).name("tx").onChange(clear);
-    folder.add(variation.mat, 5, -2, 2, 0.005).name("ty").onChange(clear);
-
-	const buttons = {
-        reset: function(){
-            fractal.final =  { fn: variations.linear, mat: mat2d.fromValues(1, 0, 0, 1, 0, 0) }
-            gui.hide()
-            initGUI(clear)
+    const renderingController = {
+        clearBuffers() {
+            options.pointsArray.fill(0)
+            options.colorArray.fill(0)
         },
-		remove: function () {
-            fractal.variations.splice(i,1)
-            gui.hide()
-			initGUI(clear)
-		}
-    };
-    folder.add(buttons,'reset').onChange(clear)
-    folder.add(buttons,'remove').onChange(clear)
-}
 
-function buildFolders(gui,clear){
-    for (let i = 0; i < fractal.variations.length; i++) {
-        const variation = fractal.variations[i]
-        variationFolder(gui,variation,i,clear)
-    }
-}
+        canvasResolutionChanged() {
+            [options.pointsArray, options.colorArray, image] = createResources()
+        },
 
-function initGUI(clear) {
-    const gui = new dat.GUI()
-
-    optionsFolder(gui,clear)
-    buildFolders(gui,clear)
-    variationFolder(gui,fractal.final,"FINAL",clear)
-    
-    const adding = { 
-        add: function(){
-            variation = { fn: variations.sinusoidal, mat: mat2d.fromValues(0.66, 0, 0, 0.66, -0.5, -0.5) }
-            fractal.variations.push(variation)
-            gui.hide()
-            initGUI(clear)
+        updateIntervalChanged() {
+            clearInterval(intervalID)
+            intervalID = setInterval(improveRender, options.interval)
         }
     }
-    gui.add(adding,'add').onChange(clear)
+
+    return renderingController
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function optionsFolder(gui, renderingController) {
+    const folder = gui.addFolder(`options`);
+    folder.add(options, 'pointsToGenerate', 100, 20000, 100).name('points amt')
+    folder.add(options, 'iterationsToSkip', 0, 300, 10).name('skipped iterations')
+    folder.add(options, 'iterationsToPlot', 50, 1000, 50).name('iterations')
+
+    folder.add(options, 'width', 100, 3840, 10).onChange(renderingController.canvasResolutionChanged)
+    folder.add(options, 'height', 100, 3840, 10).onChange(renderingController.canvasResolutionChanged)
+    folder.add(options, 'interval', 0, 2000, 5)
+        .name('interval in ms').onChange(renderingController.updateIntervalChanged)
+    folder.addColor(document.body.style, 'backgroundColor').name('background color')
+}
+
+function variationFolder(gui, variation, i, renderingController) {
+    const folder = gui.addFolder(`Variation ${i}`)
+    const clear = renderingController.clearBuffers
+
+    folder
+        .add(variation, 'fn')
+        .name('Type')
+        .options(variationTypes)
+        .onChange((type) => {
+            variation.fn = variations[type]
+            clear()
+        })
+
+    folder.add(variation.mat, 0, -10, 10, 0.005).name('a').onChange(clear)
+    folder.add(variation.mat, 1, -10, 10, 0.005).name('b').onChange(clear)
+    folder.add(variation.mat, 3, -10, 10, 0.005).name('c').onChange(clear)
+    folder.add(variation.mat, 4, -10, 10, 0.005).name('d').onChange(clear)
+    folder.add(variation.mat, 4, -2, 2, 0.005).name('tx').onChange(clear)
+    folder.add(variation.mat, 5, -2, 2, 0.005).name('ty').onChange(clear)
+    if (i !== 'FINAL') {
+        folder.add(variation, 'c', 0, 1, 0.005).name('color').onChange(clear)
+    }
+
+    const buttons = {
+        reset() {
+            variation.fn = variations.linear
+            variation.mat = mat2d.fromValues(1, 0, 0, 1, 0, 0)
+            variation.c = 0
+            gui.destroy()
+            initGUI(renderingController)
+        },
+        remove() {
+            fractal.variations.splice(i, 1)
+            gui.destroy()
+            initGUI(renderingController)
+        }
+    };
+    folder.add(buttons, 'reset').onChange(clear)
+
+    if (i !== 'FINAL') {
+        folder.add(buttons, 'remove').onChange(clear)
+    }
+}
+
+function buildFolders(gui, renderingController) {
+    for (let i = 0; i < fractal.variations.length; i++) {
+        const variation = fractal.variations[i]
+        variationFolder(gui, variation, i, renderingController)
+    }
+}
+
+function initGUI(renderingController) {
+    const gui = new dat.GUI()
+
+    optionsFolder(gui, renderingController)
+    buildFolders(gui, renderingController)
+    variationFolder(gui, fractal.final, 'FINAL', renderingController)
+
+    const adding = {
+        add() {
+            variation = { fn: variations.linear, mat: mat2d.fromValues(1, 0, 0, 1, 0, 0), c: 0 }
+            fractal.variations.push(variation)
+            gui.destroy()
+            initGUI(renderingController)
+        }
+    }
+    gui.add(adding, 'add').onChange(renderingController.clearBuffers)
+
+    async function changeColormap(colormapName) {
+        try {
+            fractal.colormap = await colormap.fromURL(`./colormaps/${colormapName}.cmap`)
+            renderingController.clearBuffers()
+        } catch (error) {
+            console.error(error)
+        }
+    }
+    gui.add(fractal, 'colormapName')
+        .name('Color Palette').options(colormaps)
+        .onChange(changeColormap)
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    fractal.colormapName = randomColormapName()
+    fractal.colormap = await colormap.fromURL(`./colormaps/${fractal.colormapName}.cmap`)
+
     const clearFractal = initRendering()
     initGUI(clearFractal)
-
-})
+}) 

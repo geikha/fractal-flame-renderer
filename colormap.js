@@ -1,0 +1,1244 @@
+(function () {
+    const { vec3 } = glMatrix
+
+    function strToColor(colorStr) {
+        const r = Number.parseInt(colorStr.slice(1, 3), 16) / 255
+        const g = Number.parseInt(colorStr.slice(3, 5), 16) / 255
+        const b = Number.parseInt(colorStr.slice(5, 7), 16) / 255
+        return vec3.fromValues(r, g, b)
+    }
+
+    function fromString(colormap) {
+        return colormap.split('\n').slice(0, -1).map(strToColor)
+    }
+
+    function fromURL(colormapURL) {
+        return fetch(colormapURL)
+            .then(response => {
+                if (response.status === 200) {
+                    return response.text()
+                }
+                throw new Error(`A problem ocurred retrieving the colormap from ${colormapURL}`)
+            })
+            .then(fromString)
+    }
+
+    const colormap = { fromString, fromURL }
+    window.colormap = colormap
+})()
+
+const colormaps = [
+    "White",
+    "BrBG",
+    "BuGn",
+    "BuPu",
+    "CMRmap",
+    "Carlson1",
+    "Digiorg1",
+    "Digiorg2",
+    "Gallet01",
+    "Gallet02",
+    "Gallet03",
+    "Gallet04",
+    "Gallet05",
+    "Gallet06",
+    "Gallet07",
+    "Gallet08",
+    "Gallet09",
+    "Gallet10",
+    "Gallet11",
+    "Gallet12",
+    "Gallet13",
+    "Gallet14",
+    "Gallet15",
+    "Gallet16",
+    "Gallet17",
+    "Gallet18",
+    "GnBu",
+    "Greens",
+    "Greys",
+    "Lindaa01",
+    "Lindaa02",
+    "Lindaa03",
+    "Lindaa04",
+    "Lindaa05",
+    "Lindaa06",
+    "Lindaa07",
+    "Lindaa08",
+    "Lindaa09",
+    "Lindaa10",
+    "Lindaa11",
+    "Lindaa12",
+    "Lindaa14",
+    "Lindaa15",
+    "Lindaa16",
+    "Lindaa17",
+    "Morgan1",
+    "Morgan2",
+    "Morgan3",
+    "Morgen3",
+    "OrRd",
+    "Oranges",
+    "PRGn",
+    "PiYG",
+    "PuBu",
+    "PuBuGn",
+    "PuOr",
+    "PuRd",
+    "Purples",
+    "RdBu",
+    "RdGy",
+    "RdPu",
+    "RdYlBu",
+    "RdYlGn",
+    "Reds",
+    "Skydye01",
+    "Skydye02",
+    "Skydye03",
+    "Skydye04",
+    "Skydye05",
+    "Skydye06",
+    "Skydye07",
+    "Skydye08",
+    "Skydye09",
+    "Skydye10",
+    "Skydye11",
+    "Skydye12",
+    "Spectral",
+    "Wistia",
+    "Wizzl011",
+    "Wizzl012",
+    "Wizzl013",
+    "Wizzl014",
+    "Wizzl015",
+    "Wizzl016",
+    "Wizzl017",
+    "Wizzl018",
+    "Wizzl019",
+    "Wizzl020",
+    "YlGn",
+    "YlGnBu",
+    "YlOrBr",
+    "YlOrRd",
+    "ace",
+    "afmhot",
+    "autumn",
+    "bi",
+    "binary",
+    "blues",
+    "bone",
+    "brg",
+    "bud2",
+    "bud3",
+    "bud4",
+    "bud5",
+    "bud6",
+    "bud7",
+    "bwr",
+    "cividis",
+    "cool",
+    "coolwarm",
+    "copper",
+    "cubehelix",
+    "damien1",
+    "damien2",
+    "damien3",
+    "damien4",
+    "damien5",
+    "default",
+    "droz10",
+    "droz11",
+    "droz12",
+    "droz13",
+    "droz14",
+    "droz15",
+    "droz21",
+    "droz22",
+    "droz23",
+    "droz28",
+    "droz31",
+    "droz33",
+    "droz34",
+    "droz35",
+    "droz36",
+    "droz38",
+    "droz39",
+    "droz40",
+    "droz44",
+    "droz46",
+    "droz49",
+    "droz52",
+    "droz54",
+    "droz56",
+    "droz60",
+    "droz62",
+    "droz8",
+    "drozdis1",
+    "enby",
+    "firestrm",
+    "flag",
+    "froth3",
+    "froth6",
+    "gamma1",
+    "gamma2",
+    "gist_earth",
+    "gist_gray",
+    "gist_heat",
+    "gist_ncar",
+    "gist_rainbow",
+    "gist_stern",
+    "gist_yarg",
+    "glasses1",
+    "glasses2",
+    "gnuplot",
+    "gnuplot2",
+    "gray",
+    "headache",
+    "hot",
+    "hsv",
+    "inferno",
+    "jet",
+    "lkmtch00",
+    "lkmtch01",
+    "lkmtch02",
+    "lkmtch03",
+    "lkmtch04",
+    "lkmtch05",
+    "lkmtch06",
+    "lkmtch07",
+    "lkmtch08",
+    "lkmtch09",
+    "lkmtch10",
+    "lkmtch11",
+    "lkmtch12",
+    "lkmtch13",
+    "lkmtch14",
+    "lkmtch15",
+    "lkmtch16",
+    "lkmtch17",
+    "lkmtch18",
+    "lkmtch19",
+    "lyapunov",
+    "magma",
+    "neon",
+    "nipy_spectral",
+    "ocean",
+    "pan",
+    "pink",
+    "plasma",
+    "prism",
+    "rainbow",
+    "royal",
+    "seismic",
+    "spring",
+    "summer",
+    "terrain",
+    "topo",
+    "trans",
+    "twilight",
+    "twilight_shifted",
+    "viridis",
+    "volcano",
+    "winter"
+] 
+
+const OrRd = colormap.fromString(`#fff7ec
+#fff7ec
+#fff7ec
+#fff7ec
+#fef6ea
+#fef6ea
+#fef6ea
+#fef6ea
+#fef6e9
+#fef6e9
+#fef6e9
+#fef6e9
+#fef5e8
+#fef5e8
+#fef5e8
+#fef5e8
+#fef5e7
+#fef5e7
+#fef5e7
+#fef5e7
+#fef4e6
+#fef4e6
+#fef4e6
+#fef4e6
+#fef4e5
+#fef4e5
+#fef4e5
+#fef4e5
+#fef3e4
+#fef3e4
+#fef3e4
+#fef3e4
+#fef3e2
+#fef3e2
+#fef3e2
+#fef3e2
+#fef2e1
+#fef2e1
+#fef2e1
+#fef2e1
+#fef2e0
+#fef2e0
+#fef2e0
+#fef1df
+#fef1df
+#fef1df
+#fef1df
+#fef1de
+#fef1de
+#fef1de
+#fef1de
+#fef0dd
+#fef0dd
+#fef0dd
+#fef0dd
+#fef0dc
+#fef0dc
+#fef0dc
+#fef0dc
+#feefdb
+#feefdb
+#feefdb
+#feefdb
+#feefd9
+#feefd9
+#feefd9
+#feefd9
+#feefd8
+#feefd8
+#feefd8
+#feefd8
+#feeed7
+#feeed7
+#feeed7
+#feeed7
+#feeed6
+#feeed6
+#feeed6
+#feeed6
+#feedd5
+#feedd5
+#feedd5
+#feedd4
+#feedd4
+#feedd4
+#feedd4
+#feecd3
+#feecd3
+#feecd3
+#feecd3
+#feecd2
+#feecd2
+#feecd2
+#feecd2
+#feebd0
+#feebd0
+#feebd0
+#feebd0
+#feebcf
+#feebcf
+#feebcf
+#feebcf
+#feeace
+#feeace
+#feeace
+#feeace
+#feeacd
+#feeacd
+#feeacd
+#feeacd
+#fee9cc
+#fee9cc
+#fee9cc
+#fee9cc
+#fee9cb
+#fee9cb
+#fee9cb
+#fee9cb
+#fee8ca
+#fee8ca
+#fee8ca
+#fee8c8
+#fee8c8
+#fee8c8
+#fee8c8
+#fde7c7
+#fde7c7
+#fde7c7
+#fde7c7
+#fde7c6
+#fde7c6
+#fde7c6
+#fde7c6
+#fde6c5
+#fde6c5
+#fde6c5
+#fde6c5
+#fde6c3
+#fde6c3
+#fde6c3
+#fde6c3
+#fde5c2
+#fde5c2
+#fde5c2
+#fde5c2
+#fde4c1
+#fde4c1
+#fde4c1
+#fde4c1
+#fde4bf
+#fde4bf
+#fde4bf
+#fde4bf
+#fde3be
+#fde3be
+#fde3be
+#fde3be
+#fde2bd
+#fde2bd
+#fde2bd
+#fde2bb
+#fde2bb
+#fde2bb
+#fde2bb
+#fde1ba
+#fde1ba
+#fde1ba
+#fde1ba
+#fde1b9
+#fde1b9
+#fde1b9
+#fde1b9
+#fde0b8
+#fde0b8
+#fde0b8
+#fde0b8
+#fddfb6
+#fddfb6
+#fddfb6
+#fddfb6
+#fddfb5
+#fddfb5
+#fddfb5
+#fddfb5
+#fddeb4
+#fddeb4
+#fddeb4
+#fddeb4
+#fdddb2
+#fdddb2
+#fdddb2
+#fdddb2
+#fdddb1
+#fdddb1
+#fdddb1
+#fdddb1
+#fddcb0
+#fddcb0
+#fddcb0
+#fddcb0
+#fddcae
+#fddcae
+#fddcae
+#fddbad
+#fddbad
+#fddbad
+#fddbad
+#fddaac
+#fddaac
+#fddaac
+#fddaac
+#fddaaa
+#fddaaa
+#fddaaa
+#fddaaa
+#fdd9a9
+#fdd9a9
+#fdd9a9
+#fdd9a9
+#fdd8a8
+#fdd8a8
+#fdd8a8
+#fdd8a8
+#fdd8a6
+#fdd8a6
+#fdd8a6
+#fdd8a6
+#fdd7a5
+#fdd7a5
+#fdd7a5
+#fdd7a5
+#fdd6a4
+#fdd6a4
+#fdd6a4
+#fdd6a4
+#fdd6a2
+#fdd6a2
+#fdd6a2
+#fdd6a2
+#fdd5a1
+#fdd5a1
+#fdd5a1
+#fdd5a0
+#fdd5a0
+#fdd5a0
+#fdd5a0
+#fdd49e
+#fdd49e
+#fdd49e
+#fdd49e
+#fdd39d
+#fdd39d
+#fdd39d
+#fdd39d
+#fdd39c
+#fdd39c
+#fdd39c
+#fdd39c
+#fdd29c
+#fdd29c
+#fdd29c
+#fdd29c
+#fdd19b
+#fdd19b
+#fdd19b
+#fdd19b
+#fdd09a
+#fdd09a
+#fdd09a
+#fdd09a
+#fdcf99
+#fdcf99
+#fdcf99
+#fdcf99
+#fdcf98
+#fdcf98
+#fdcf98
+#fdcf98
+#fdce98
+#fdce98
+#fdce98
+#fdcd97
+#fdcd97
+#fdcd97
+#fdcd97
+#fdcc96
+#fdcc96
+#fdcc96
+#fdcc96
+#fdcb95
+#fdcb95
+#fdcb95
+#fdcb95
+#fdcb94
+#fdcb94
+#fdcb94
+#fdcb94
+#fdca94
+#fdca94
+#fdca94
+#fdca94
+#fdc993
+#fdc993
+#fdc993
+#fdc993
+#fdc892
+#fdc892
+#fdc892
+#fdc892
+#fdc891
+#fdc891
+#fdc891
+#fdc891
+#fdc790
+#fdc790
+#fdc790
+#fdc790
+#fdc68f
+#fdc68f
+#fdc68f
+#fdc58f
+#fdc58f
+#fdc58f
+#fdc58f
+#fdc48e
+#fdc48e
+#fdc48e
+#fdc48e
+#fdc48d
+#fdc48d
+#fdc48d
+#fdc48d
+#fdc38c
+#fdc38c
+#fdc38c
+#fdc38c
+#fdc28b
+#fdc28b
+#fdc28b
+#fdc28b
+#fdc18b
+#fdc18b
+#fdc18b
+#fdc18b
+#fdc08a
+#fdc08a
+#fdc08a
+#fdc08a
+#fdc089
+#fdc089
+#fdc089
+#fdc089
+#fdbf88
+#fdbf88
+#fdbf88
+#fdbf88
+#fdbe87
+#fdbe87
+#fdbe87
+#fdbe87
+#fdbd86
+#fdbd86
+#fdbd86
+#fdbd86
+#fdbd86
+#fdbd86
+#fdbd86
+#fdbc85
+#fdbc85
+#fdbc85
+#fdbc85
+#fdbb84
+#fdbb84
+#fdbb84
+#fdbb84
+#fcba83
+#fcba83
+#fcba83
+#fcba83
+#fcb982
+#fcb982
+#fcb982
+#fcb982
+#fcb780
+#fcb780
+#fcb780
+#fcb780
+#fcb67f
+#fcb67f
+#fcb67f
+#fcb67f
+#fcb47e
+#fcb47e
+#fcb47e
+#fcb47e
+#fcb37c
+#fcb37c
+#fcb37c
+#fcb37c
+#fcb17b
+#fcb17b
+#fcb17b
+#fcb07a
+#fcb07a
+#fcb07a
+#fcb07a
+#fcae78
+#fcae78
+#fcae78
+#fcae78
+#fcad77
+#fcad77
+#fcad77
+#fcad77
+#fcac76
+#fcac76
+#fcac76
+#fcac76
+#fcaa74
+#fcaa74
+#fcaa74
+#fcaa74
+#fca973
+#fca973
+#fca973
+#fca973
+#fca771
+#fca771
+#fca771
+#fca771
+#fca670
+#fca670
+#fca670
+#fca670
+#fca46f
+#fca46f
+#fca46f
+#fca46f
+#fca36d
+#fca36d
+#fca36d
+#fca16c
+#fca16c
+#fca16c
+#fca16c
+#fca06b
+#fca06b
+#fca06b
+#fca06b
+#fc9f69
+#fc9f69
+#fc9f69
+#fc9f69
+#fc9d68
+#fc9d68
+#fc9d68
+#fc9d68
+#fc9c67
+#fc9c67
+#fc9c67
+#fc9c67
+#fc9a65
+#fc9a65
+#fc9a65
+#fc9a65
+#fc9964
+#fc9964
+#fc9964
+#fc9964
+#fc9763
+#fc9763
+#fc9763
+#fc9763
+#fc9661
+#fc9661
+#fc9661
+#fc9661
+#fc9460
+#fc9460
+#fc9460
+#fc935f
+#fc935f
+#fc935f
+#fc935f
+#fc925d
+#fc925d
+#fc925d
+#fc925d
+#fc905c
+#fc905c
+#fc905c
+#fc905c
+#fc8f5b
+#fc8f5b
+#fc8f5b
+#fc8f5b
+#fc8d59
+#fc8d59
+#fc8d59
+#fc8d59
+#fb8c58
+#fb8c58
+#fb8c58
+#fb8c58
+#fb8b58
+#fb8b58
+#fb8b58
+#fb8b58
+#fa8957
+#fa8957
+#fa8957
+#fa8957
+#fa8857
+#fa8857
+#fa8857
+#fa8857
+#fa8756
+#fa8756
+#fa8756
+#fa8756
+#f98656
+#f98656
+#f98656
+#f98455
+#f98455
+#f98455
+#f98455
+#f88355
+#f88355
+#f88355
+#f88355
+#f88254
+#f88254
+#f88254
+#f88254
+#f88153
+#f88153
+#f88153
+#f88153
+#f77f53
+#f77f53
+#f77f53
+#f77f53
+#f77e52
+#f77e52
+#f77e52
+#f77e52
+#f67d52
+#f67d52
+#f67d52
+#f67d52
+#f67c51
+#f67c51
+#f67c51
+#f67c51
+#f67a51
+#f67a51
+#f67a51
+#f67a51
+#f57950
+#f57950
+#f57950
+#f57850
+#f57850
+#f57850
+#f57850
+#f4774f
+#f4774f
+#f4774f
+#f4774f
+#f4754f
+#f4754f
+#f4754f
+#f4754f
+#f4744e
+#f4744e
+#f4744e
+#f4744e
+#f3734e
+#f3734e
+#f3734e
+#f3734e
+#f3724d
+#f3724d
+#f3724d
+#f3724d
+#f2704d
+#f2704d
+#f2704d
+#f2704d
+#f26f4c
+#f26f4c
+#f26f4c
+#f26f4c
+#f26e4b
+#f26e4b
+#f26e4b
+#f26e4b
+#f16d4b
+#f16d4b
+#f16d4b
+#f16b4a
+#f16b4a
+#f16b4a
+#f16b4a
+#f06a4a
+#f06a4a
+#f06a4a
+#f06a4a
+#f06949
+#f06949
+#f06949
+#f06949
+#ef6749
+#ef6749
+#ef6749
+#ef6749
+#ef6648
+#ef6648
+#ef6648
+#ef6648
+#ef6548
+#ef6548
+#ef6548
+#ef6548
+#ee6347
+#ee6347
+#ee6347
+#ee6347
+#ed6245
+#ed6245
+#ed6245
+#ed6245
+#ed6044
+#ed6044
+#ed6044
+#ed6044
+#ec5e43
+#ec5e43
+#ec5e43
+#eb5d42
+#eb5d42
+#eb5d42
+#eb5d42
+#ea5b40
+#ea5b40
+#ea5b40
+#ea5b40
+#ea593f
+#ea593f
+#ea593f
+#ea593f
+#e9583e
+#e9583e
+#e9583e
+#e9583e
+#e8563c
+#e8563c
+#e8563c
+#e8563c
+#e7543b
+#e7543b
+#e7543b
+#e7543b
+#e7533a
+#e7533a
+#e7533a
+#e7533a
+#e65139
+#e65139
+#e65139
+#e65139
+#e55037
+#e55037
+#e55037
+#e55037
+#e44e36
+#e44e36
+#e44e36
+#e44e36
+#e34c35
+#e34c35
+#e34c35
+#e34b33
+#e34b33
+#e34b33
+#e34b33
+#e24932
+#e24932
+#e24932
+#e24932
+#e14731
+#e14731
+#e14731
+#e14731
+#e04630
+#e04630
+#e04630
+#e04630
+#e0442e
+#e0442e
+#e0442e
+#e0442e
+#df422d
+#df422d
+#df422d
+#df422d
+#de412c
+#de412c
+#de412c
+#de412c
+#dd3f2a
+#dd3f2a
+#dd3f2a
+#dd3f2a
+#dd3d29
+#dd3d29
+#dd3d29
+#dd3d29
+#dc3c28
+#dc3c28
+#dc3c28
+#db3a27
+#db3a27
+#db3a27
+#db3a27
+#da3825
+#da3825
+#da3825
+#da3825
+#da3724
+#da3724
+#da3724
+#da3724
+#d93523
+#d93523
+#d93523
+#d93523
+#d83321
+#d83321
+#d83321
+#d83321
+#d73220
+#d73220
+#d73220
+#d73220
+#d7301f
+#d7301f
+#d7301f
+#d7301f
+#d62e1e
+#d62e1e
+#d62e1e
+#d62e1e
+#d52d1d
+#d52d1d
+#d52d1d
+#d52d1d
+#d32b1c
+#d32b1c
+#d32b1c
+#d22a1b
+#d22a1b
+#d22a1b
+#d22a1b
+#d1281a
+#d1281a
+#d1281a
+#d1281a
+#d02719
+#d02719
+#d02719
+#d02719
+#cf2518
+#cf2518
+#cf2518
+#cf2518
+#ce2417
+#ce2417
+#ce2417
+#ce2417
+#cd2216
+#cd2216
+#cd2216
+#cd2216
+#cb2115
+#cb2115
+#cb2115
+#cb2115
+#ca1f14
+#ca1f14
+#ca1f14
+#ca1f14
+#c91e13
+#c91e13
+#c91e13
+#c91e13
+#c81c12
+#c81c12
+#c81c12
+#c71b11
+#c71b11
+#c71b11
+#c71b11
+#c61910
+#c61910
+#c61910
+#c61910
+#c5180f
+#c5180f
+#c5180f
+#c5180f
+#c4160e
+#c4160e
+#c4160e
+#c4160e
+#c2150d
+#c2150d
+#c2150d
+#c2150d
+#c1130c
+#c1130c
+#c1130c
+#c1130c
+#c0120b
+#c0120b
+#c0120b
+#c0120b
+#bf100a
+#bf100a
+#bf100a
+#bf100a
+#be0f09
+#be0f09
+#be0f09
+#be0f09
+#bd0d08
+#bd0d08
+#bd0d08
+#bd0d08
+#bc0c07
+#bc0c07
+#bc0c07
+#bb0a06
+#bb0a06
+#bb0a06
+#bb0a06
+#b90905
+#b90905
+#b90905
+#b90905
+#b80704
+#b80704
+#b80704
+#b80704
+#b70604
+#b70604
+#b70604
+#b70604
+#b60403
+#b60403
+#b60403
+#b60403
+#b50302
+#b50302
+#b50302
+#b50302
+#b40101
+#b40101
+#b40101
+#b40101
+#b30000
+#b30000
+#b30000
+#b30000
+#b10000
+#b10000
+#b10000
+#b10000
+#af0000
+#af0000
+#af0000
+#ae0000
+#ae0000
+#ae0000
+#ae0000
+#ac0000
+#ac0000
+#ac0000
+#ac0000
+#ab0000
+#ab0000
+#ab0000
+#ab0000
+#a90000
+#a90000
+#a90000
+#a90000
+#a70000
+#a70000
+#a70000
+#a70000
+#a60000
+#a60000
+#a60000
+#a60000
+#a40000
+#a40000
+#a40000
+#a40000
+#a20000
+#a20000
+#a20000
+#a20000
+#a10000
+#a10000
+#a10000
+#a10000
+#9f0000
+#9f0000
+#9f0000
+#9d0000
+#9d0000
+#9d0000
+#9d0000
+#9c0000
+#9c0000
+#9c0000
+#9c0000
+#9a0000
+#9a0000
+#9a0000
+#9a0000
+#990000
+#990000
+#990000
+#990000
+#970000
+#970000
+#970000
+#970000
+#950000
+#950000
+#950000
+#950000
+#940000
+#940000
+#940000
+#940000
+#920000
+#920000
+#920000
+#920000
+#900000
+#900000
+#900000
+#900000
+#8f0000
+#8f0000
+#8f0000
+#8d0000
+#8d0000
+#8d0000
+#8d0000
+#8c0000
+#8c0000
+#8c0000
+#8c0000
+#8a0000
+#8a0000
+#8a0000
+#8a0000
+#880000
+#880000
+#880000
+#880000
+#870000
+#870000
+#870000
+#870000
+#850000
+#850000
+#850000
+#850000
+#830000
+#830000
+#830000
+#830000
+#820000
+#820000
+#820000
+#820000
+#800000
+#800000
+#800000
+#800000
+#7f0000
+#7f0000
+#7f0000
+#7f0000`)
