@@ -384,7 +384,20 @@ function initGUI(renderingController) {
 document.addEventListener('DOMContentLoaded', async () => {
     fractal.colormapName = randomColormapName()
     fractal.colormap = await colormap.fromURL(`./colormaps/${fractal.colormapName}.cmap`)
+function randomBackground() {
+	if (Math.random() < 0.65) {
+		document.body.style.backgroundColor = "black";
+	} else {
+		document.body.style.backgroundColor = "white";
+	}
+}
 
-    const clearFractal = initRendering()
-    initGUI(clearFractal)
-}) 
+document.addEventListener("DOMContentLoaded", async () => {
+	fractal.colormapName = randomColormapName();
+	fractal.colormap = await colormap.fromURL(
+		`./colormaps/${fractal.colormapName}.cmap`
+	);
+	const clearFractal = initRendering();
+	initGUI(clearFractal);
+	randomBackground();
+});
