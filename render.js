@@ -5,8 +5,6 @@
  * Colormaps from: https://github.com/tritoke/libcmap/tree/master/colourmaps
  */
 
-document.body.style.backgroundColor = (Math.random()<0.65) ? 'black' : 'white'
-
 const { vec2, vec3, mat2d } = glMatrix
 
 const variations = {
@@ -386,6 +384,7 @@ function initGUI(renderingController) {
 document.addEventListener('DOMContentLoaded', async () => {
     fractal.colormapName = randomColormapName()
     fractal.colormap = await colormap.fromURL(`./colormaps/${fractal.colormapName}.cmap`)
+
     const clearFractal = initRendering()
     initGUI(clearFractal)
 }) 
