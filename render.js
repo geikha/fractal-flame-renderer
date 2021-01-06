@@ -315,8 +315,8 @@ function variationFolder(gui, variation, i, renderingController) {
 
     folder.add(variation.mat, 0, -10, 10, 0.005).name('a').onChange(clear)
     folder.add(variation.mat, 1, -10, 10, 0.005).name('b').onChange(clear)
-    folder.add(variation.mat, 3, -10, 10, 0.005).name('c').onChange(clear)
-    folder.add(variation.mat, 4, -10, 10, 0.005).name('d').onChange(clear)
+    folder.add(variation.mat, 2, -10, 10, 0.005).name('c').onChange(clear)
+    folder.add(variation.mat, 3, -10, 10, 0.005).name('d').onChange(clear)
     folder.add(variation.mat, 4, -2, 2, 0.005).name('tx').onChange(clear)
     folder.add(variation.mat, 5, -2, 2, 0.005).name('ty').onChange(clear)
     if (i !== 'FINAL') {
@@ -381,9 +381,6 @@ function initGUI(renderingController) {
         .onChange(changeColormap)
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    fractal.colormapName = randomColormapName()
-    fractal.colormap = await colormap.fromURL(`./colormaps/${fractal.colormapName}.cmap`)
 function randomBackground() {
 	if (Math.random() < 0.65) {
 		document.body.style.backgroundColor = "black";
