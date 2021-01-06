@@ -391,9 +391,9 @@ function initGUI(renderingController) {
 
 function randomBackground() {
 	if (Math.random() < 0.65) {
-		document.body.style.backgroundColor = "black";
+		document.body.style.backgroundColor = "#000000";
 	} else {
-		document.body.style.backgroundColor = "white";
+		document.body.style.backgroundColor = "#FFFFFF";
 	}
 }
 
