@@ -79,6 +79,14 @@ const variations = {
     fisheye(out, p) {
         const r = vec2.length(p)
         return vec2.scale(out, p, 2 / (r + 1))
+    },
+    julia(out, p) {
+        const x = p[0], y = p[1]
+        const theta = Math.atan2(y, x)
+        const sqrt_r = Math.sqrt(vec2.length(p))
+        const ohm = Math.floor(Math.random() * 2) * Math.PI
+        const arg = theta/2 + ohm
+        return vec2.set(out, sqrt_r * Math.cos(arg), Math.sin(arg))
     }
 }
 const variationTypes = Object.keys(variations)
