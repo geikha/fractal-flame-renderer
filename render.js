@@ -100,14 +100,16 @@ const fractal = {
     ],
     final :
         { fn: variations.linear, mat: mat2d.fromValues(1, 0, 0, 1, 0, 0), c: 1 },
+    gradient :
+        [[50,200,20],[0,0,255]]
 }
 
 const options = {
     pointsToGenerate : 1000,
     iterationsToSkip : 20,
     iterationsToPlot : 150,
-    width : 1000,
-    height : 1000
+    width : 600,
+    height : 600
 }
 
 function generatePointsFor(fractal, options={}) {
@@ -118,6 +120,7 @@ function generatePointsFor(fractal, options={}) {
     const WIDTH = options.width || 500
     const HEIGHT = options.height || 500
     const pointsArray = options.pointsArray || new Int32Array(WIDTH * HEIGHT)
+    const colorArray = options.colorArray || new Float32Array(WIDTH * HEIGHT)
 
     function getRandomVariation() {
         return fractal.variations[Math.floor(Math.random()*fractal.variations.length)]
@@ -134,6 +137,7 @@ function generatePointsFor(fractal, options={}) {
         const x_array = Math.floor((x + 1) / 2 * WIDTH)
         const y_array = Math.floor((y + 1) / 2 * HEIGHT)
         pointsArray[y_array * WIDTH + x_array]++
+        colorArray[y_array * WIDTH + x_array] = c
     }
 
     const p = vec2.create()
@@ -157,8 +161,8 @@ function generatePointsFor(fractal, options={}) {
 
             if (pointIsInBounds(p)) {
                 var c = Math.random()
-                c = (c + variation.c)/2
-                addPointToArray(p)
+                c = (c+variation.c)/2
+                addPointToArray(p,c)
             }
         }
     }
@@ -177,7 +181,15 @@ function getMaxFreq(pointsArray) {
     return Math.log(maxFreq)
 }
 
-function render(data, width, height, pointsArray) {
+function getColorFromGradient(index){
+    const c = fractal.gradient
+    const r = c[0][0] + index * (c[1][0] - c[0][0])
+    const g = c[0][1] + index * (c[1][1] - c[0][1])
+    const b = c[0][2] + index * (c[1][2] - c[0][2])
+    return [r,g,b]
+}
+
+function render(data, width, height, pointsArray, colorArray) {
     const maxFreq = getMaxFreq(pointsArray)
     
     function setPixel(x, y, r, g, b, a=255) {
@@ -190,9 +202,10 @@ function render(data, width, height, pointsArray) {
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
             const freq = pointsArray[y * width + x]
-            const color = Math.log(freq) / maxFreq * 256
-            //const fcolor = fractal.scale(color).rgb()
-            setPixel(x, y, color, color, color)
+            const alpha = Math.log(freq) / maxFreq * 256
+            const cindex = colorArray[y * width + x]
+            const color = getColorFromGradient(cindex)
+            setPixel(x, y, color[0], color[1], color[2], alpha)
         }
     }
 
@@ -205,13 +218,15 @@ function initRendering() {
     const CANVAS_HEIGHT = canvas.height
 
     const pointsArray = new Int32Array(CANVAS_WIDTH * CANVAS_HEIGHT)
+    const colorArray = new Float32Array(CANVAS_WIDTH * CANVAS_HEIGHT)
     const clear = () => pointsArray.fill(0)
     const image = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT)
     options.pointsArray = pointsArray
+    options.colorArray = colorArray
 
     setInterval(() => {
         generatePointsFor(fractal, options)
-        render(image.data, CANVAS_WIDTH, CANVAS_HEIGHT, options.pointsArray)
+        render(image.data, CANVAS_WIDTH, CANVAS_HEIGHT, options.pointsArray, options.colorArray)
     }, 20)
 
     function drawToScreen() {
